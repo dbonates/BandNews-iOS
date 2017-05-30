@@ -13,8 +13,10 @@ import AVKit
 class MainViewController: UIViewController {
 
 
+    lazy var streamURLPath: String = "http://evp.mm.uol.com.br:1935/bnewsfm_rj/bnewsfm_rj.sdp/playlist.m3u8"
+    
     lazy var player: AVPlayer? = {
-        guard let url = URL(string: "http://evp.mm.uol.com.br:1935/bnewsfm_rj/bnewsfm_rj.sdp/playlist.m3u8") else {
+        guard let url = URL(string:self.streamURLPath ) else {
             print("impossible to load this url for streaming")
             return nil
         }
@@ -29,6 +31,26 @@ class MainViewController: UIViewController {
         loadData()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        loadLastStationIfAny()
+    }
+    
+    
+    func loadLastStationIfAny() {
+        DispatchQueue.main.async {
+        
+            let lastSavedId = self.getSavedStation()
+            if lastSavedId < 1 {
+                self.openStationsList()
+            } else {
+                self.replaceStream(with: lastSavedId)
+                
+            }
+            
+        }
+        
+    }
     
     func addAppLogo() {
         let bandLogo = UILabel(frame: CGRect.zero)
@@ -57,6 +79,66 @@ class MainViewController: UIViewController {
         swipeDown.direction = .down
         view.addGestureRecognizer(swipeDown)
         
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(openStationsList))
+        doubleTap.numberOfTapsRequired = 2
+        doubleTap.numberOfTouchesRequired = 2
+        view.addGestureRecognizer(doubleTap)
+    }
+    
+    func openStationsList() {
+        
+        let url = URL(string: "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio-list")!
+        
+        DataCache().getResource(for: url, completion: { stations in
+            guard let stations = stations else { return }
+            self.showStationsList(with: stations)
+        })
+    }
+    
+    func showStationsList(with stations: [Station]) {
+        
+        let stationsViewController = StationsViewController(style: .plain)
+        
+        stationsViewController.modalPresentationStyle = .overCurrentContext
+        stationsViewController.stations = stations
+        stationsViewController.delegate = self
+        
+        let popoverPC = UIPopoverPresentationController(presentedViewController: stationsViewController, presenting: self)
+        
+        popoverPC.delegate = self as? UIPopoverPresentationControllerDelegate
+        
+        popoverPC.sourceView = self.view
+        popoverPC.sourceRect = CGRect(x: 0, y: 0, width: 320, height: 480)
+        
+        present(stationsViewController, animated: true, completion: nil)
+    }
+    
+    func replaceStream(with linkId: Int) {
+        
+        saveCurrentStation(linkId)
+        
+        let streamUrlPath = "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio?1=1&rid=\(linkId)&auc=29E2A48D-BDD2-4589-9710-18A446A19B83"
+        
+        guard let streamUrl = URL(string: streamUrlPath) else { return }
+        
+        DataCache().getStreamInfo(for: streamUrl, id: linkId) { streamInfo in
+            guard let streamInfo = streamInfo else { return }
+            self.playStream(streamInfo.path)
+        }
+    }
+    
+    func saveCurrentStation(_ linkId: Int) {
+        UserDefaults.standard.set(linkId, forKey: "currentStation")
+    }
+    
+    func getSavedStation() -> Int {
+        return UserDefaults.standard.integer(forKey: "currentStation")
+    }
+    
+    func playStream(_ streamPath: String) {
+        guard let streamUrl = URL(string: streamPath) else { return }
+        let newStreamItem = AVPlayerItem(url: streamUrl)
+        player?.replaceCurrentItem(with: newStreamItem)
     }
     
     func pause() {
