@@ -15,7 +15,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        #if DEBUG
+        self.window = TouchWindow(frame: UIScreen.main.bounds)
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let viewController = sb.instantiateViewController(withIdentifier: "MainVC")
+        self.window!.rootViewController = viewController
+        self.window!.makeKeyAndVisible()
+        #endif
         return true
     }
 

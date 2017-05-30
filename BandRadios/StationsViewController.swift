@@ -103,7 +103,7 @@ class StationsViewController: UITableViewController {
         
         // Do the animation
         
-        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: { () -> Void in
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
             
             cell.contentView.transform = CGAffineTransform(translationX: 0, y: 0)
             cell.contentView.layer.opacity = 1
@@ -111,7 +111,7 @@ class StationsViewController: UITableViewController {
         }, completion: nil)
         
         
-        UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .allowUserInteraction, animations: { () -> Void in
+        UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
             
             cell.textLabel?.transform = CGAffineTransform(translationX: 0, y: 0)
             

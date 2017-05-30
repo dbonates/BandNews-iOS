@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E83937ED1EDE183E00D03E5E /* TouchWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83937EC1EDE183E00D03E5E /* TouchWindow.swift */; };
+		E83937EF1EDE191900D03E5E /* GSTouchImageViewQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83937EE1EDE191900D03E5E /* GSTouchImageViewQueue.swift */; };
 		E8E5EA971EDD1BA200984E26 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E5EA961EDD1BA200984E26 /* Station.swift */; };
 		E8E5EA991EDD33A500984E26 /* StationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E5EA981EDD33A500984E26 /* StationsViewController.swift */; };
 		E8E5EA9B1EDD46F300984E26 /* StreamInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E5EA9A1EDD46F300984E26 /* StreamInfo.swift */; };
@@ -23,6 +25,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E83937EC1EDE183E00D03E5E /* TouchWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchWindow.swift; sourceTree = "<group>"; };
+		E83937EE1EDE191900D03E5E /* GSTouchImageViewQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GSTouchImageViewQueue.swift; sourceTree = "<group>"; };
 		E8E5EA961EDD1BA200984E26 /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		E8E5EA981EDD33A500984E26 /* StationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StationsViewController.swift; sourceTree = "<group>"; };
 		E8E5EA9A1EDD46F300984E26 /* StreamInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamInfo.swift; sourceTree = "<group>"; };
@@ -80,6 +84,8 @@
 				E8E5EA961EDD1BA200984E26 /* Station.swift */,
 				E8E5EA9A1EDD46F300984E26 /* StreamInfo.swift */,
 				E8E5EA981EDD33A500984E26 /* StationsViewController.swift */,
+				E83937EC1EDE183E00D03E5E /* TouchWindow.swift */,
+				E83937EE1EDE191900D03E5E /* GSTouchImageViewQueue.swift */,
 				E8EC4FED1EDCEAF600F9101D /* Main.storyboard */,
 				E8EC4FF01EDCEAF600F9101D /* Assets.xcassets */,
 				E8EC4FF21EDCEAF600F9101D /* LaunchScreen.storyboard */,
@@ -161,6 +167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E83937ED1EDE183E00D03E5E /* TouchWindow.swift in Sources */,
 				E8EC50001EDCED7B00F9101D /* UIView+.swift in Sources */,
 				E8EC4FEC1EDCEAF600F9101D /* MainViewController.swift in Sources */,
 				E8E5EA971EDD1BA200984E26 /* Station.swift in Sources */,
@@ -170,6 +177,7 @@
 				E8E5EA9B1EDD46F300984E26 /* StreamInfo.swift in Sources */,
 				E8EC50041EDCFD0A00F9101D /* DataService.swift in Sources */,
 				E8EC50061EDCFD0A00F9101D /* Resource.swift in Sources */,
+				E83937EF1EDE191900D03E5E /* GSTouchImageViewQueue.swift in Sources */,
 				E8E5EA991EDD33A500984E26 /* StationsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,6 +305,7 @@
 				INFOPLIST_FILE = BandRadios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-DDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bonates.BandRadios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -311,6 +320,7 @@
 				INFOPLIST_FILE = BandRadios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bonates.BandRadios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
