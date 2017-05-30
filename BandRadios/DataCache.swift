@@ -19,30 +19,25 @@ final class DataCache {
     func getResource(for url: URL, completion: @escaping ([Station]?) -> ()) {
         
         let localURL = cachePathFor(url)
-        let localResource = stationsResource(for: localURL, isLocal: true)
+        let shouldLoadLocal = FileManager.default.fileExists(atPath: localURL.path)
         
-        if FileManager.default.fileExists(atPath: localURL.path) {
-            
-            DataService().loadLocal(resource: localResource, completion: { stations in
-                
+        let loadURL = shouldLoadLocal ? localURL : url
+        
+        let sr = stationsResource(from: loadURL, isLocal: shouldLoadLocal)
+        
+        if shouldLoadLocal {
+            DataService().loadLocal(resource: sr, completion: { stations in
                 completion(stations)
             })
-            
-            
         } else {
-            let sr = stationsResource(for: url, isLocal: false)
             DataService().load(resource: sr, completion: { stations in
                 completion(stations)
             })
         }
         
-        
-        
-       
-        
     }
     
-    func stationsResource(for url: URL, isLocal: Bool = true) -> Resource<[Station]> {
+    func stationsResource(from url: URL, isLocal: Bool = true) -> Resource<[Station]> {
     
         let stationsResource = Resource<[Station]>(url: url, parse: { data in
             
@@ -50,9 +45,8 @@ final class DataCache {
                 let localURL = self.cachePathFor(url)
                 if !isLocal {
                     try data.write  (to: localURL)
-                } else {
-                    
                 }
+                
                 let newData = try Data(contentsOf: localURL)
                 
                 if let json = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as? [String: Any] {
@@ -83,10 +77,11 @@ final class DataCache {
     // clear the cache
     func clearCache() {
         do {
-            let filePaths = try FileManager.default.contentsOfDirectory(atPath: cacheBasePath.path)
-            for filePath in filePaths {
-                try FileManager.default.removeItem(atPath: cacheBasePath.path + filePath)
+            let stationsSourcePath = cacheBasePath.appendingPathComponent("retrieve-radio-list").path
+            if FileManager.default.fileExists(atPath: stationsSourcePath) {
+                try FileManager.default.removeItem(atPath: stationsSourcePath)
             }
+            
         } catch let error as NSError {
             print("Could not clear temp folder: \(error.debugDescription)")
         }
