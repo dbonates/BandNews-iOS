@@ -10,6 +10,11 @@ import UIKit
 
 class StationsViewController: UITableViewController {
     
+    // these are for help on scroll direction detection
+    var toTop = false
+    var currentOffset:CGFloat = 0
+    let pullIntensity: CGFloat = 140
+    
     var delegate: MainViewController?
     
     override func viewDidLoad() {
@@ -54,9 +59,77 @@ class StationsViewController: UITableViewController {
         return cell
     }
     
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         dismiss(animated: true, completion: nil)
         delegate?.replaceStream(with: stations[indexPath.row].id)
+    }
+    
+    
+    // works on animation
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if !tableView.isDragging {
+            
+            // first animation, when not scrolling it should be simple
+            cell.contentView.layer.opacity = 0
+            cell.contentView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+            
+            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                cell.contentView.layer.opacity = 1
+                cell.contentView.transform = CGAffineTransform(scaleX: 1, y: 1)
+                
+            })
+            
+            return
+            
+        }
+        
+        cell.contentView.layer.opacity = 0
+        
+        
+        if toTop {
+            
+            cell.contentView.transform = CGAffineTransform(translationX: 0, y: -pullIntensity)
+            cell.textLabel?.transform = CGAffineTransform(translationX:0, y: -pullIntensity)
+        } else {
+            cell.contentView.transform = CGAffineTransform(translationX:0, y: pullIntensity)
+            cell.textLabel?.transform = CGAffineTransform(translationX:0, y: pullIntensity)
+        }
+        
+        
+        
+        // Do the animation
+        
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: { () -> Void in
+            
+            cell.contentView.transform = CGAffineTransform(translationX: 0, y: 0)
+            cell.contentView.layer.opacity = 1
+            
+        }, completion: nil)
+        
+        
+        UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .allowUserInteraction, animations: { () -> Void in
+            
+            cell.textLabel?.transform = CGAffineTransform(translationX: 0, y: 0)
+            
+        }, completion: nil)
+        
+    }
+
+    
+    
+    // updating tableView offset info
+    
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        currentOffset = scrollView.contentOffset.y
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let newOffset = scrollView.contentOffset.y
+        toTop = newOffset > currentOffset ? false : true
+        currentOffset = newOffset
     }
 }
