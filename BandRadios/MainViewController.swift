@@ -25,6 +25,8 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         setupGestures()
         addAppLogo()
+        
+        loadData()
     }
     
     
@@ -66,6 +68,15 @@ class MainViewController: UIViewController {
         view.enlight()
         if player?.timeControlStatus == .playing { return }
         player?.play()
+    }
+    
+    func loadData() {
+        let url = URL(string: "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio-list")!
+        
+        DataCache().getResource(for: url, completion: { stations in
+            guard let stations = stations else { return }
+            print("total de estações: \(stations.count)")
+        })
     }
 }
 

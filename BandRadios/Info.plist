@@ -24,6 +24,11 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>webservice.bandradios.onebrasilmedia.com.br</key>
+			<dict>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
 			<key>evp.mm.uol.com.br</key>
 			<dict>
 				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E8E5EA971EDD1BA200984E26 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E5EA961EDD1BA200984E26 /* Station.swift */; };
 		E8EC4FEA1EDCEAF600F9101D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC4FE91EDCEAF600F9101D /* AppDelegate.swift */; };
 		E8EC4FEC1EDCEAF600F9101D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC4FEB1EDCEAF600F9101D /* MainViewController.swift */; };
 		E8EC4FEF1EDCEAF600F9101D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E8EC4FED1EDCEAF600F9101D /* Main.storyboard */; };
@@ -14,9 +15,13 @@
 		E8EC4FF41EDCEAF600F9101D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E8EC4FF21EDCEAF600F9101D /* LaunchScreen.storyboard */; };
 		E8EC4FFC1EDCEBB800F9101D /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC4FFB1EDCEBB800F9101D /* Color+.swift */; };
 		E8EC50001EDCED7B00F9101D /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC4FFF1EDCED7B00F9101D /* UIView+.swift */; };
+		E8EC50041EDCFD0A00F9101D /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC50011EDCFD0A00F9101D /* DataService.swift */; };
+		E8EC50051EDCFD0A00F9101D /* DataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC50021EDCFD0A00F9101D /* DataCache.swift */; };
+		E8EC50061EDCFD0A00F9101D /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC50031EDCFD0A00F9101D /* Resource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E8E5EA961EDD1BA200984E26 /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		E8EC4FE61EDCEAF600F9101D /* BandRadios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BandRadios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8EC4FE91EDCEAF600F9101D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E8EC4FEB1EDCEAF600F9101D /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -26,6 +31,9 @@
 		E8EC4FF51EDCEAF600F9101D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E8EC4FFB1EDCEBB800F9101D /* Color+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		E8EC4FFF1EDCED7B00F9101D /* UIView+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
+		E8EC50011EDCFD0A00F9101D /* DataService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		E8EC50021EDCFD0A00F9101D /* DataCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataCache.swift; sourceTree = "<group>"; };
+		E8EC50031EDCFD0A00F9101D /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +70,10 @@
 				E8EC4FEB1EDCEAF600F9101D /* MainViewController.swift */,
 				E8EC4FFB1EDCEBB800F9101D /* Color+.swift */,
 				E8EC4FFF1EDCED7B00F9101D /* UIView+.swift */,
+				E8EC50011EDCFD0A00F9101D /* DataService.swift */,
+				E8EC50021EDCFD0A00F9101D /* DataCache.swift */,
+				E8EC50031EDCFD0A00F9101D /* Resource.swift */,
+				E8E5EA961EDD1BA200984E26 /* Station.swift */,
 				E8EC4FED1EDCEAF600F9101D /* Main.storyboard */,
 				E8EC4FF01EDCEAF600F9101D /* Assets.xcassets */,
 				E8EC4FF21EDCEAF600F9101D /* LaunchScreen.storyboard */,
@@ -145,8 +157,12 @@
 			files = (
 				E8EC50001EDCED7B00F9101D /* UIView+.swift in Sources */,
 				E8EC4FEC1EDCEAF600F9101D /* MainViewController.swift in Sources */,
+				E8E5EA971EDD1BA200984E26 /* Station.swift in Sources */,
 				E8EC4FFC1EDCEBB800F9101D /* Color+.swift in Sources */,
+				E8EC50051EDCFD0A00F9101D /* DataCache.swift in Sources */,
 				E8EC4FEA1EDCEAF600F9101D /* AppDelegate.swift in Sources */,
+				E8EC50041EDCFD0A00F9101D /* DataService.swift in Sources */,
+				E8EC50061EDCFD0A00F9101D /* Resource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,6 +328,7 @@
 				E8EC4FFA1EDCEAF600F9101D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
