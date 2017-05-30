@@ -12,7 +12,10 @@ final class DataCache {
     
     let cacheBasePath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     
-    func cachePathFor(_ url: URL) -> URL {
+    func cachePathFor(_ url: URL, sufix: String = "") -> URL {
+        if !sufix.isEmpty {
+            return cacheBasePath.appendingPathComponent(url.lastPathComponent + "-\(sufix)")
+        }
         return cacheBasePath.appendingPathComponent(url.lastPathComponent)
     }
     
@@ -62,6 +65,58 @@ final class DataCache {
         })
         
         return stationsResource
+    }
+    
+    func getStreamInfo(for url: URL, id: Int, completion: @escaping (StreamInfo?) -> ()) {
+        
+        let localURL = cachePathFor(url, sufix: "\(id)")
+        let shouldLoadLocal = FileManager.default.fileExists(atPath: localURL.path)
+        
+        let loadURL = shouldLoadLocal ? localURL : url
+        
+        let sr = streamInfoResource(from: loadURL, id: id, isLocal: shouldLoadLocal)
+        
+        if shouldLoadLocal {
+            DataService().loadLocal(resource: sr, completion: { stationInfo in
+                completion(stationInfo)
+            })
+        } else {
+            DataService().load(resource: sr, completion: { stationInfo in
+                completion(stationInfo)
+            })
+        }
+        
+    }
+    
+    func streamInfoResource(from url: URL, id: Int, isLocal: Bool = true) -> Resource<StreamInfo> {
+        
+        let stationInfoResource = Resource<StreamInfo>(url: url, parse: { data in
+            
+            do {
+                let localURL = self.cachePathFor(url, sufix: "\(id)")
+                if !isLocal {
+                    try data.write(to: localURL)
+                }
+                
+                let newData = try Data(contentsOf: localURL)
+                
+                if let json = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as? [String: Any] {
+                    
+                    guard
+                        let resultDataJson = json["resultData"] as? [String: Any]
+                        else { return nil }
+                    
+                    return (StreamInfo(from: resultDataJson))
+                    
+                }
+            } catch let error {
+                print(error.localizedDescription)
+            }
+            
+            return nil
+        })
+        
+        return stationInfoResource
     }
     
     
