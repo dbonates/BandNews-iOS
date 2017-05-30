@@ -12,22 +12,12 @@ class StationsViewController: UITableViewController {
     
     var delegate: MainViewController?
     
-    let mainColor = UIColor.init(colorLiteralRed: 26/255, green: 72/255, blue: 102/255, alpha: 1)
-    lazy var headerView: UIView = {
-        return UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 20))
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "StationCell")
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor.init(colorLiteralRed: 26/255, green: 72/255, blue: 102/255, alpha: 1)
+        tableView.backgroundColor = .defaultColor
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
-        
-        headerView.backgroundColor = mainColor
-        
-        UIApplication.shared.keyWindow?.addSubview(headerView)
-        
     }
     
     var stations: [Station] = [] {
@@ -56,9 +46,9 @@ class StationsViewController: UITableViewController {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 24, weight: UIFontWeightThin)
         cell.textLabel?.text = stations[indexPath.row].name
 
-        cell.backgroundColor = mainColor
+        cell.backgroundColor = .defaultColor
         let selectedView = UIView()
-        selectedView.backgroundColor = mainColor.darker()
+        selectedView.backgroundColor = UIColor.defaultColor.darker()
         cell.selectedBackgroundView = selectedView
         
         return cell
@@ -68,11 +58,5 @@ class StationsViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         dismiss(animated: true, completion: nil)
         delegate?.replaceStream(with: stations[indexPath.row].id)
-    }
-    
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offSet = tableView.contentOffset.y
-        guard offSet < 0 else { return }
-        headerView.layer.opacity = Float(1-abs(offSet / 20))
     }
 }

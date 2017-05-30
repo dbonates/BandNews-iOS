@@ -86,3 +86,11 @@ extension DBColor {
     }
     
 }
+
+extension DBColor {
+    #if os(iOS)
+        static var defaultColor: UIColor { return UIColor(colorLiteralRed: 26/255, green: 72/255, blue: 102/255, alpha: 1) }
+    #else
+        static var defaultColor: NSColor { return NSColor(colorLiteralRed: 26/255, green: 72/255, blue: 102/255, alpha: 1) }
+    #endif
+}
