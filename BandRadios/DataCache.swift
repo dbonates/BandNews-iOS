@@ -19,23 +19,26 @@ final class DataCache {
     func getResource(for url: URL, completion: @escaping ([Station]?) -> ()) {
         
         let localURL = cachePathFor(url)
+        let localResource = stationsResource(for: localURL, isLocal: true)
         
         if FileManager.default.fileExists(atPath: localURL.path) {
-
-            let localResource = stationsResource(for: localURL, isLocal: true)
             
-            guard let data = try? Data(contentsOf: localURL) else { completion(nil); return }
-
-            completion(localResource.parse(data))
-            return
+            DataService().loadLocal(resource: localResource, completion: { stations in
+                
+                completion(stations)
+            })
             
+            
+        } else {
+            let sr = stationsResource(for: url, isLocal: false)
+            DataService().load(resource: sr, completion: { stations in
+                completion(stations)
+            })
         }
         
-        let sr = stationsResource(for: url, isLocal: false)
         
-        DataService().load(resource: sr, completion: { stations in
-            completion(stations)
-        })
+        
+       
         
     }
     
