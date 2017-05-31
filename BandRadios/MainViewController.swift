@@ -12,6 +12,7 @@ import AVKit
 
 class MainViewController: UIViewController {
 
+    var statusInfo: UILabel!
 
     lazy var streamURLPath: String = "http://evp.mm.uol.com.br:1935/bnewsfm_rj/bnewsfm_rj.sdp/playlist.m3u8"
     
@@ -23,11 +24,18 @@ class MainViewController: UIViewController {
         return AVPlayer(url: url)
     }()
     
+    var lastRadioId: Int = 3
+    var currentRadioName = ""
+    
+    let bandLogo = UILabel(frame: CGRect.zero)
+    var ledView = Controls.acessory.ledView
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGestures()
-        addAppLogo()
         
+        addAppLogo()
+        addStatusInfo()
         loadData()
     }
     
@@ -38,22 +46,22 @@ class MainViewController: UIViewController {
     
     
     func loadLastStationIfAny() {
-        DispatchQueue.main.async {
         
-            let lastSavedId = self.getSavedStation()
-            if lastSavedId < 1 {
-                self.openStationsList()
-            } else {
-                self.replaceStream(with: lastSavedId)
-                
+        let radioIdSaved = getSavedStation()
+        if radioIdSaved < 1 {
+            openStationsList()
+        } else {
+            if let name = UserDefaults.standard.string(forKey: "currentRadioName") {
+                currentRadioName = name
+                statusInfo.text = name
             }
+            replaceStream(with: radioIdSaved)
             
         }
-        
     }
     
     func addAppLogo() {
-        let bandLogo = UILabel(frame: CGRect.zero)
+        
         bandLogo.translatesAutoresizingMaskIntoConstraints = false
         bandLogo.text = "BandNews"
         bandLogo.textAlignment = .center
@@ -62,7 +70,19 @@ class MainViewController: UIViewController {
         bandLogo.sizeToFit()
         view.addSubview(bandLogo)
         bandLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        bandLogo.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        bandLogo.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -10).isActive = true
+    }
+    
+    func addStatusInfo() {
+        statusInfo = UILabel(frame: CGRect.zero)
+        statusInfo.translatesAutoresizingMaskIntoConstraints = false
+        statusInfo.textAlignment = .center
+        statusInfo.font = UIFont.systemFont(ofSize: 18, weight: UIFontWeightThin)
+        statusInfo.textColor = .highlightColor
+        view.addSubview(statusInfo)
+        statusInfo.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        statusInfo.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        statusInfo.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -80,7 +100,7 @@ class MainViewController: UIViewController {
         view.addGestureRecognizer(swipeDown)
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(openStationsList))
-        doubleTap.numberOfTapsRequired = 2
+        doubleTap.numberOfTapsRequired = 3
         doubleTap.numberOfTouchesRequired = 2
         view.addGestureRecognizer(doubleTap)
     }
@@ -101,8 +121,9 @@ class MainViewController: UIViewController {
         
         stationsViewController.modalPresentationStyle = .overCurrentContext
         stationsViewController.stations = stations
+        stationsViewController.lastRadioId = lastRadioId
         stationsViewController.delegate = self
-        
+
         let popoverPC = UIPopoverPresentationController(presentedViewController: stationsViewController, presenting: self)
         
         popoverPC.delegate = self as? UIPopoverPresentationControllerDelegate
@@ -115,6 +136,8 @@ class MainViewController: UIViewController {
     
     func replaceStream(with linkId: Int) {
         
+        if lastRadioId == linkId { return }
+        
         saveCurrentStation(linkId)
         
         let streamUrlPath = "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio?1=1&rid=\(linkId)&auc=29E2A48D-BDD2-4589-9710-18A446A19B83"
@@ -123,28 +146,40 @@ class MainViewController: UIViewController {
         
         DataCache().getStreamInfo(for: streamUrl, id: linkId) { streamInfo in
             guard let streamInfo = streamInfo else { return }
-            self.playStream(streamInfo.path)
+            self.playStream(streamInfo)
         }
     }
     
     func saveCurrentStation(_ linkId: Int) {
+        lastRadioId = linkId
         UserDefaults.standard.set(linkId, forKey: "currentStation")
+        if let name = statusInfo.text {
+            UserDefaults.standard.set(name, forKey: "currentRadioName")
+        }
     }
     
     func getSavedStation() -> Int {
         return UserDefaults.standard.integer(forKey: "currentStation")
     }
     
-    func playStream(_ streamPath: String) {
-        guard let streamUrl = URL(string: streamPath) else { return }
+    func playStream(_ streamInfo: StreamInfo) {
+        guard let streamUrl = URL(string: streamInfo.path) else { return }
         let newStreamItem = AVPlayerItem(url: streamUrl)
         player?.replaceCurrentItem(with: newStreamItem)
+        updateStatus(streamInfo.name)
+    }
+    
+    func updateStatus(_ radioName: String) {
+        DispatchQueue.main.async {
+            self.statusInfo.text = radioName
+        }
     }
     
     func pause() {
         view.enlight(false)
         if player?.timeControlStatus == .paused { return }
         player?.pause()
+        
     }
     func play() {
         view.enlight()

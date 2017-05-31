@@ -13,9 +13,11 @@ class StationsViewController: UITableViewController {
     // these are for help on scroll direction detection
     var toTop = false
     var currentOffset:CGFloat = 0
-    let pullIntensity: CGFloat = 140
+    let pullIntensity: CGFloat = 100
     
     var delegate: MainViewController?
+    
+    var lastRadioId: Int = 3
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +25,14 @@ class StationsViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.backgroundColor = .defaultColor
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+        tableView.transform = CGAffineTransform(translationX: 0, y: view.bounds.height)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: { () -> Void in
+            self.tableView.transform = CGAffineTransform(translationX: 0, y: 0)
+        }, completion: nil)
     }
     
     var stations: [Station] = [] {
@@ -47,18 +57,24 @@ class StationsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StationCell", for: indexPath)
 
-        cell.textLabel?.textColor = .white
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 24, weight: UIFontWeightThin)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 21, weight: UIFontWeightThin)
         cell.textLabel?.text = stations[indexPath.row].name
 
         cell.backgroundColor = .defaultColor
         let selectedView = UIView()
         selectedView.backgroundColor = UIColor.defaultColor.darker()
         cell.selectedBackgroundView = selectedView
-        
+        if stations[indexPath.row].id == lastRadioId {
+            cell.accessoryView = Controls.acessory.ledView
+            cell.textLabel?.textColor = .highlightColor
+        } else {
+            cell.accessoryView = nil
+            cell.textLabel?.textColor = .white
+
+        }
         return cell
     }
-    
+
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -71,20 +87,10 @@ class StationsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
+        
         if !tableView.isDragging {
-            
             // first animation, when not scrolling it should be simple
-            cell.contentView.layer.opacity = 0
-            cell.contentView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-            
-            UIView.animate(withDuration: 0.5, animations: { () -> Void in
-                cell.contentView.layer.opacity = 1
-                cell.contentView.transform = CGAffineTransform(scaleX: 1, y: 1)
-                
-            })
-            
             return
-            
         }
         
         cell.contentView.layer.opacity = 0

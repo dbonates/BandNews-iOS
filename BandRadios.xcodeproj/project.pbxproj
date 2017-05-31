@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E80F6E361EDE4AA600AB28BC /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = E80F6E351EDE4AA600AB28BC /* Controls.swift */; };
 		E83937ED1EDE183E00D03E5E /* TouchWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83937EC1EDE183E00D03E5E /* TouchWindow.swift */; };
 		E83937EF1EDE191900D03E5E /* GSTouchImageViewQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83937EE1EDE191900D03E5E /* GSTouchImageViewQueue.swift */; };
 		E8E5EA971EDD1BA200984E26 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E5EA961EDD1BA200984E26 /* Station.swift */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E80F6E351EDE4AA600AB28BC /* Controls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
 		E83937EC1EDE183E00D03E5E /* TouchWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchWindow.swift; sourceTree = "<group>"; };
 		E83937EE1EDE191900D03E5E /* GSTouchImageViewQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GSTouchImageViewQueue.swift; sourceTree = "<group>"; };
 		E8E5EA961EDD1BA200984E26 /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				E8E5EA961EDD1BA200984E26 /* Station.swift */,
 				E8E5EA9A1EDD46F300984E26 /* StreamInfo.swift */,
 				E8E5EA981EDD33A500984E26 /* StationsViewController.swift */,
+				E80F6E351EDE4AA600AB28BC /* Controls.swift */,
 				E83937EC1EDE183E00D03E5E /* TouchWindow.swift */,
 				E83937EE1EDE191900D03E5E /* GSTouchImageViewQueue.swift */,
 				E8EC4FED1EDCEAF600F9101D /* Main.storyboard */,
@@ -177,6 +180,7 @@
 				E8E5EA9B1EDD46F300984E26 /* StreamInfo.swift in Sources */,
 				E8EC50041EDCFD0A00F9101D /* DataService.swift in Sources */,
 				E8EC50061EDCFD0A00F9101D /* Resource.swift in Sources */,
+				E80F6E361EDE4AA600AB28BC /* Controls.swift in Sources */,
 				E83937EF1EDE191900D03E5E /* GSTouchImageViewQueue.swift in Sources */,
 				E8E5EA991EDD33A500984E26 /* StationsViewController.swift in Sources */,
 			);
