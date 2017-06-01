@@ -189,6 +189,13 @@ class MainViewController: UIViewController {
         
     }
     func play() {
+        
+        guard player.currentItem != nil else {
+            statusInfo.text = "Nenhuma rádio selecionada ainda"
+            openStationsList()
+            return
+        }
+        
         view.enlight()
         if player.timeControlStatus == .playing { return }
         player.play()

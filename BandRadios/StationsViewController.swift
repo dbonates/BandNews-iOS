@@ -14,6 +14,7 @@ class StationsViewController: UITableViewController {
     var toTop = false
     var currentOffset:CGFloat = 0
     let pullIntensity: CGFloat = 100
+    var dismissResistence: CGFloat = 165
     
     var delegate: MainViewController?
     
@@ -42,7 +43,6 @@ class StationsViewController: UITableViewController {
     var stations: [Station] = [] {
         didSet {
             DispatchQueue.main.async {
-                
                 self.tableView.reloadData()
             }
         }
@@ -141,6 +141,6 @@ class StationsViewController: UITableViewController {
         toTop = newOffset > currentOffset ? false : true
         currentOffset = newOffset
         
-        if currentOffset < -180 { back() }
+        if currentOffset < -dismissResistence { back() }
     }
 }
