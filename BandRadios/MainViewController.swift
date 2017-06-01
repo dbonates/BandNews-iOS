@@ -29,7 +29,6 @@ class MainViewController: UIViewController {
         
         addAppLogo()
         addStatusInfo()
-        loadRadioList()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -193,15 +192,6 @@ class MainViewController: UIViewController {
         view.enlight()
         if player.timeControlStatus == .playing { return }
         player.play()
-    }
-    
-    func loadRadioList() {
-        let url = URL(string: "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio-list")!
-        
-        DataCache().getRadioList(from: url, completion: { stations in
-            guard let stations = stations else { return }
-            print("total de estações: \(stations.count)")
-        })
     }
 }
 

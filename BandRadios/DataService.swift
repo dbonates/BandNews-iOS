@@ -41,7 +41,7 @@ final class DataService {
     
     func loadLocal<T>(resource: Resource<T>, completion: @escaping (T?) -> ()) {
                 
-        let localURL = self.cachePathFor(resource.url, id:  resource.id)
+        let localURL = self.cachePathFor(resource.url, id: resource.id)
         
         guard let data = try? Data(contentsOf: localURL) else { completion(nil); return }
         

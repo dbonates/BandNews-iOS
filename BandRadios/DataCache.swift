@@ -12,7 +12,11 @@ final class DataCache {
     
     let cacheBasePath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     
-    func cachePathFor(_ url: URL) -> URL {
+    func cachePathFor(_ url: URL, id: Int? = nil) -> URL {
+        
+        if let id = id {
+            return cacheBasePath.appendingPathComponent(url.lastPathComponent + "-\(id)")
+        }
         return cacheBasePath.appendingPathComponent(url.lastPathComponent)
     }
     
@@ -60,12 +64,11 @@ final class DataCache {
     
     func getStreamInfo(for url: URL, id: Int, completion: @escaping (Stream?) -> ()) {
         
-        let localURL = cachePathFor(url)
+        let localURL = cachePathFor(url, id: id)
+        
         let shouldLoadLocal = FileManager.default.fileExists(atPath: localURL.path)
-        
-        let loadURL = shouldLoadLocal ? localURL : url
-        
-        let sr = streamInfoResource(from: loadURL, id: id)
+                
+        let sr = streamInfoResource(from: url, id: id)
         
         if shouldLoadLocal {
             DataService().loadLocal(resource: sr, completion: { stationInfo in
