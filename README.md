@@ -7,5 +7,5 @@ A simple app to make listening to the radio easy as it should be ;)
 
 ![super simple BandNews](img/bnews-demo.gif)
 
-> ROADMAP:
-> [Click here for Projetcs for roadmap info].(https://github.com/dbonates/BandNews/projects/1)
+### ROADMAP: 
+[Click here for Projetcs for roadmap info](https://github.com/dbonates/BandNews/projects/1)
