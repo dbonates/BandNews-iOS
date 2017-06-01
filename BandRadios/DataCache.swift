@@ -58,7 +58,7 @@ final class DataCache {
         return stationsResource
     }
     
-    func getStreamInfo(for url: URL, id: Int, completion: @escaping (StreamInfo?) -> ()) {
+    func getStreamInfo(for url: URL, id: Int, completion: @escaping (Stream?) -> ()) {
         
         let localURL = cachePathFor(url)
         let shouldLoadLocal = FileManager.default.fileExists(atPath: localURL.path)
@@ -79,9 +79,9 @@ final class DataCache {
         
     }
     
-    func streamInfoResource(from url: URL, id: Int, isLocal: Bool = true) -> Resource<StreamInfo> {
+    func streamInfoResource(from url: URL, id: Int, isLocal: Bool = true) -> Resource<Stream> {
         
-        let stationInfoResource = Resource<StreamInfo>(url: url, parse: { data in
+        let stationInfoResource = Resource<Stream>(url: url, parse: { data in
             
             do {
                 
@@ -91,7 +91,7 @@ final class DataCache {
                         let resultDataJson = json["resultData"] as? [String: Any]
                         else { return nil }
                     
-                    return (StreamInfo(from: resultDataJson))
+                    return (Stream(from: resultDataJson))
                     
                 }
             } catch let error {

@@ -18,8 +18,7 @@ class MainViewController: UIViewController {
     
     let player = AVPlayer()
     
-    var lastRadioId: Int = 3
-    var currentRadioName = ""
+    var currentStream: Stream?
     
     let bandLogo = UILabel(frame: CGRect.zero)
     var ledView = Controls.acessory.ledView
@@ -45,13 +44,22 @@ class MainViewController: UIViewController {
         if radioIdSaved < 1 {
             openStationsList()
         } else {
-            if let name = UserDefaults.standard.string(forKey: "currentRadioName") {
-                currentRadioName = name
-                statusInfo.text = name
-            }
-            replaceStream(with: radioIdSaved)
             
+            guard
+                let name = UserDefaults.standard.string(forKey: "currentStream.name"),
+                let path = UserDefaults.standard.string(forKey: "currentStream.path")
+            else {
+                openStationsList()
+                return
+            }
+            
+            let savedStream = Stream(id: radioIdSaved, path: path, name: name)
+            setupStream(savedStream)
         }
+    }
+    
+    func getSavedStation() -> Int {
+        return UserDefaults.standard.integer(forKey: "currentStream.id")
     }
     
     func addAppLogo() {
@@ -105,7 +113,9 @@ class MainViewController: UIViewController {
         
         DataCache().getRadioList(from: url, completion: { stations in
             guard let stations = stations else { return }
-            self.showStationsList(with: stations)
+            DispatchQueue.main.async {
+                self.showStationsList(with: stations)
+            }
         })
     }
     
@@ -115,7 +125,9 @@ class MainViewController: UIViewController {
         
         stationsViewController.modalPresentationStyle = .overCurrentContext
         stationsViewController.stations = stations
-        stationsViewController.lastRadioId = lastRadioId
+        if let currentStream = self.currentStream {
+            stationsViewController.lastRadioId = currentStream.id
+        }
         stationsViewController.delegate = self
 
         let popoverPC = UIPopoverPresentationController(presentedViewController: stationsViewController, presenting: self)
@@ -128,46 +140,48 @@ class MainViewController: UIViewController {
         present(stationsViewController, animated: true, completion: nil)
     }
     
-    func replaceStream(with linkId: Int) {
+    func replaceStream(with station: Station) {
+        guard
+            currentStream?.id != station.id else { print("rádio já ativada."); return }
         
-        if lastRadioId == linkId { return }
-        
-        saveCurrentStation(linkId)
-        
-        let streamUrlPath = "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio?1=1&rid=\(linkId)&auc=29E2A48D-BDD2-4589-9710-18A446A19B83"
+        let streamUrlPath = "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio?1=1&rid=\(station.id)&auc=29E2A48D-BDD2-4589-9710-18A446A19B83"
         
         guard let streamUrl = URL(string: streamUrlPath) else { return }
         
-        DataCache().getStreamInfo(for: streamUrl, id: linkId) { streamInfo in
+        DataCache().getStreamInfo(for: streamUrl, id: station.id) { streamInfo in
             guard let streamInfo = streamInfo else { return }
-            self.setupStream(streamInfo)
+            DispatchQueue.main.async {
+                self.setupStream(streamInfo)
+            }
         }
     }
     
-    func saveCurrentStation(_ linkId: Int) {
-        lastRadioId = linkId
-        UserDefaults.standard.set(linkId, forKey: "currentStation")
-        if let name = statusInfo.text {
-            UserDefaults.standard.set(name, forKey: "currentRadioName")
-        }
-    }
     
-    func getSavedStation() -> Int {
-        return UserDefaults.standard.integer(forKey: "currentStation")
-    }
-    
-    func setupStream(_ streamInfo: StreamInfo) {
+    func setupStream(_ streamInfo: Stream) {
+        
+        self.currentStream = streamInfo
         guard let streamUrl = URL(string: streamInfo.path) else { return }
         let newStreamItem = AVPlayerItem(url: streamUrl)
         player.replaceCurrentItem(with: newStreamItem)
-        updateStatus(streamInfo.name)
+        updateStatus()
     }
     
-    func updateStatus(_ radioName: String) {
-        DispatchQueue.main.async {
-            self.statusInfo.text = radioName
-        }
+    func updateStatus() {
+        self.statusInfo.text = currentStream?.name
+        saveCurrentStream()
     }
+    
+    func saveCurrentStream() {
+        guard let currentStream = self.currentStream else {
+            print("nenhuma radio ativa atualmente")
+            return
+        }
+        
+        UserDefaults.standard.set(currentStream.id, forKey: "currentStream.id")
+        UserDefaults.standard.set(currentStream.name, forKey: "currentStream.name")
+        UserDefaults.standard.set(currentStream.path, forKey: "currentStream.path")
+    }
+    
     
     func pause() {
         view.enlight(false)

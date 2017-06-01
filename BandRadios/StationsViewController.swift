@@ -79,7 +79,7 @@ class StationsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         dismiss(animated: true, completion: nil)
-        delegate?.replaceStream(with: stations[indexPath.row].id)
+        delegate?.replaceStream(with: stations[indexPath.row])
     }
     
     
