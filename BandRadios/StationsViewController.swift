@@ -17,7 +17,7 @@ class StationsViewController: UITableViewController {
     
     var delegate: MainViewController?
     
-    var lastRadioId: Int = 3
+    var lastRadioId: Int = -1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,6 +26,10 @@ class StationsViewController: UITableViewController {
         tableView.backgroundColor = .defaultColor
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         tableView.transform = CGAffineTransform(translationX: 0, y: view.bounds.height)
+    }
+    
+    func back() {
+        dismiss(animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -77,7 +81,6 @@ class StationsViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         dismiss(animated: true, completion: nil)
         delegate?.replaceStream(with: stations[indexPath.row])
     }
@@ -137,5 +140,7 @@ class StationsViewController: UITableViewController {
         let newOffset = scrollView.contentOffset.y
         toTop = newOffset > currentOffset ? false : true
         currentOffset = newOffset
+        
+        if currentOffset < -180 { back() }
     }
 }
