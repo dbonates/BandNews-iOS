@@ -14,15 +14,9 @@ class MainViewController: UIViewController {
 
     var statusInfo: UILabel!
 
-    lazy var streamURLPath: String = "http://evp.mm.uol.com.br:1935/bnewsfm_rj/bnewsfm_rj.sdp/playlist.m3u8"
+    var streamURLPath: String?
     
-    lazy var player: AVPlayer? = {
-        guard let url = URL(string:self.streamURLPath ) else {
-            print("impossible to load this url for streaming")
-            return nil
-        }
-        return AVPlayer(url: url)
-    }()
+    let player = AVPlayer()
     
     var lastRadioId: Int = 3
     var currentRadioName = ""
@@ -36,7 +30,7 @@ class MainViewController: UIViewController {
         
         addAppLogo()
         addStatusInfo()
-        loadData()
+        loadRadioList()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -100,8 +94,8 @@ class MainViewController: UIViewController {
         view.addGestureRecognizer(swipeDown)
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(openStationsList))
-        doubleTap.numberOfTapsRequired = 3
-        doubleTap.numberOfTouchesRequired = 2
+        doubleTap.numberOfTapsRequired = 2
+        doubleTap.numberOfTouchesRequired = 1
         view.addGestureRecognizer(doubleTap)
     }
     
@@ -109,7 +103,7 @@ class MainViewController: UIViewController {
         
         let url = URL(string: "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio-list")!
         
-        DataCache().getResource(for: url, completion: { stations in
+        DataCache().getRadioList(from: url, completion: { stations in
             guard let stations = stations else { return }
             self.showStationsList(with: stations)
         })
@@ -146,7 +140,7 @@ class MainViewController: UIViewController {
         
         DataCache().getStreamInfo(for: streamUrl, id: linkId) { streamInfo in
             guard let streamInfo = streamInfo else { return }
-            self.playStream(streamInfo)
+            self.setupStream(streamInfo)
         }
     }
     
@@ -162,10 +156,10 @@ class MainViewController: UIViewController {
         return UserDefaults.standard.integer(forKey: "currentStation")
     }
     
-    func playStream(_ streamInfo: StreamInfo) {
+    func setupStream(_ streamInfo: StreamInfo) {
         guard let streamUrl = URL(string: streamInfo.path) else { return }
         let newStreamItem = AVPlayerItem(url: streamUrl)
-        player?.replaceCurrentItem(with: newStreamItem)
+        player.replaceCurrentItem(with: newStreamItem)
         updateStatus(streamInfo.name)
     }
     
@@ -177,20 +171,20 @@ class MainViewController: UIViewController {
     
     func pause() {
         view.enlight(false)
-        if player?.timeControlStatus == .paused { return }
-        player?.pause()
+        if player.timeControlStatus == .paused { return }
+        player.pause()
         
     }
     func play() {
         view.enlight()
-        if player?.timeControlStatus == .playing { return }
-        player?.play()
+        if player.timeControlStatus == .playing { return }
+        player.play()
     }
     
-    func loadData() {
+    func loadRadioList() {
         let url = URL(string: "http://webservice.bandradios.onebrasilmedia.com.br:8087/bandradios-api/retrieve-radio-list")!
         
-        DataCache().getResource(for: url, completion: { stations in
+        DataCache().getRadioList(from: url, completion: { stations in
             guard let stations = stations else { return }
             print("total de estações: \(stations.count)")
         })

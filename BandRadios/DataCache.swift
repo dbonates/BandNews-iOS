@@ -12,14 +12,11 @@ final class DataCache {
     
     let cacheBasePath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     
-    func cachePathFor(_ url: URL, sufix: String = "") -> URL {
-        if !sufix.isEmpty {
-            return cacheBasePath.appendingPathComponent(url.lastPathComponent + "-\(sufix)")
-        }
+    func cachePathFor(_ url: URL) -> URL {
         return cacheBasePath.appendingPathComponent(url.lastPathComponent)
     }
     
-    func getResource(for url: URL, completion: @escaping ([Station]?) -> ()) {
+    func getRadioList(from url: URL, completion: @escaping ([Station]?) -> ()) {
         
         let localURL = cachePathFor(url)
         let shouldLoadLocal = FileManager.default.fileExists(atPath: localURL.path)
@@ -45,14 +42,8 @@ final class DataCache {
         let stationsResource = Resource<[Station]>(url: url, parse: { data in
             
             do {
-                let localURL = self.cachePathFor(url)
-                if !isLocal {
-                    try data.write  (to: localURL)
-                }
                 
-                let newData = try Data(contentsOf: localURL)
-                
-                if let json = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as? [String: Any] {
+                if let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] {
                     
                     return (self.stations(from: json))
                     
@@ -69,7 +60,7 @@ final class DataCache {
     
     func getStreamInfo(for url: URL, id: Int, completion: @escaping (StreamInfo?) -> ()) {
         
-        let localURL = cachePathFor(url, sufix: "\(id)")
+        let localURL = cachePathFor(url)
         let shouldLoadLocal = FileManager.default.fileExists(atPath: localURL.path)
         
         let loadURL = shouldLoadLocal ? localURL : url
@@ -93,14 +84,8 @@ final class DataCache {
         let stationInfoResource = Resource<StreamInfo>(url: url, parse: { data in
             
             do {
-                let localURL = self.cachePathFor(url, sufix: "\(id)")
-                if !isLocal {
-                    try data.write(to: localURL)
-                }
                 
-                let newData = try Data(contentsOf: localURL)
-                
-                if let json = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as? [String: Any] {
+                if let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] {
                     
                     guard
                         let resultDataJson = json["resultData"] as? [String: Any]
