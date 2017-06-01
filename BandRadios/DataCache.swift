@@ -39,7 +39,7 @@ final class DataCache {
     
     func stationsResource(from url: URL, isLocal: Bool = true) -> Resource<[Station]> {
     
-        let stationsResource = Resource<[Station]>(url: url, parse: { data in
+        let stationsResource = Resource<[Station]>(id: nil, url: url, parse: { data in
             
             do {
                 
@@ -65,7 +65,7 @@ final class DataCache {
         
         let loadURL = shouldLoadLocal ? localURL : url
         
-        let sr = streamInfoResource(from: loadURL, id: id, isLocal: shouldLoadLocal)
+        let sr = streamInfoResource(from: loadURL, id: id)
         
         if shouldLoadLocal {
             DataService().loadLocal(resource: sr, completion: { stationInfo in
@@ -79,9 +79,9 @@ final class DataCache {
         
     }
     
-    func streamInfoResource(from url: URL, id: Int, isLocal: Bool = true) -> Resource<Stream> {
+    func streamInfoResource(from url: URL, id: Int) -> Resource<Stream> {
         
-        let stationInfoResource = Resource<Stream>(url: url, parse: { data in
+        let stationInfoResource = Resource<Stream>(id: id, url: url, parse: { data in
             
             do {
                 

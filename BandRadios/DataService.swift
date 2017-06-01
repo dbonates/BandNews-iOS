@@ -9,6 +9,16 @@
 import Foundation
 
 final class DataService {
+    
+    let cacheBasePath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+    
+    func cachePathFor(_ url: URL, id: Int? = nil) -> URL {
+        if let id = id {
+            return cacheBasePath.appendingPathComponent(url.lastPathComponent + "-\(id)")
+        }
+        return cacheBasePath.appendingPathComponent(url.lastPathComponent)
+    }
+    
     func load<T>(resource: Resource<T>, completion: @escaping (T?) -> ()) {
         (URLSession.shared.dataTask(with: resource.url, completionHandler: { data, response, error in
             guard error == nil else { print(error.debugDescription); return }
@@ -20,15 +30,23 @@ final class DataService {
                     return
             }
             guard let data = data else { completion(nil); return }
+            
+            let localURL = self.cachePathFor(resource.url, id: resource.id)
+            try? data.write(to: localURL)
+        
             completion(resource.parse(data))
         })).resume()
     }
     
     
     func loadLocal<T>(resource: Resource<T>, completion: @escaping (T?) -> ()) {
+                
+        let localURL = self.cachePathFor(resource.url, id:  resource.id)
         
-        guard let data = try? Data(contentsOf: resource.url) else { completion(nil); return }
+        guard let data = try? Data(contentsOf: localURL) else { completion(nil); return }
         
         completion(resource.parse(data))
     }
+    
+    
 }

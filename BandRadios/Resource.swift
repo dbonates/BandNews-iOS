@@ -9,6 +9,7 @@
 import Foundation
 
 struct Resource<T> {
+    var id: Int? = nil
     var url: URL
     var parse: (Data) -> T?
 }
