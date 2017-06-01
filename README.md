@@ -14,3 +14,4 @@ A simple app to make listening to the radio easy as it should be ;)
 > - a filter
 > - indicate when wheather the radio is on or off
 > - an option to reset app to defaults
+> - tap on radio name should open the stations list
