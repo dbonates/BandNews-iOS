@@ -6,6 +6,10 @@ A simple app to make listening to the radio easy as it should be ;)
 - *Double Tap* with *TWO* fingers, to open radios listing
 
 ![super simple BandNews](img/bnews-demo.gif)
-![super simple BandNews](img/ss01.png)
 
+> TODO:
+> - alarm
+> - a gesture summary screen for help
+> - a filter
+> - indicate when wheather the radio is on or off
 
