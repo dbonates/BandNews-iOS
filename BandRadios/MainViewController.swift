@@ -12,7 +12,7 @@ import AVKit
 
 class MainViewController: UIViewController {
 
-    var statusInfo: UILabel!
+    var statusInfo: UIButton!
 
     var streamURLPath: String?
     
@@ -75,15 +75,19 @@ class MainViewController: UIViewController {
     }
     
     func addStatusInfo() {
-        statusInfo = UILabel(frame: CGRect.zero)
+        statusInfo = UIButton(frame: CGRect.zero)
         statusInfo.translatesAutoresizingMaskIntoConstraints = false
-        statusInfo.textAlignment = .center
-        statusInfo.font = UIFont.systemFont(ofSize: 18, weight: UIFontWeightThin)
-        statusInfo.textColor = .highlightColor
+        statusInfo.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: UIFontWeightThin)
+        statusInfo.setTitleColor( .highlightColor, for: .normal)
         view.addSubview(statusInfo)
+        statusInfo.addTarget(self, action: #selector(statusInfotaped(_:)), for: .touchUpInside)
         statusInfo.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         statusInfo.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         statusInfo.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
+    }
+    
+    func statusInfotaped(_ sender: Any){
+        openStationsList()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -166,7 +170,7 @@ class MainViewController: UIViewController {
     }
     
     func updateStatus() {
-        self.statusInfo.text = currentStream?.name
+        self.statusInfo.setTitle(currentStream?.name, for: .normal)
         saveCurrentStream()
     }
     
@@ -191,7 +195,7 @@ class MainViewController: UIViewController {
     func play() {
         
         guard player.currentItem != nil else {
-            statusInfo.text = "Nenhuma rádio selecionada ainda"
+            statusInfo.setTitle("Nenhuma rádio selecionada ainda", for: .normal)
             openStationsList()
             return
         }
