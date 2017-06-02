@@ -24,7 +24,7 @@ class StationsViewController: UITableViewController {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "StationCell")
         tableView.separatorStyle = .none
-        tableView.backgroundColor = .defaultColor
+        tableView.backgroundColor = delegate?.view.backgroundColor
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         tableView.transform = CGAffineTransform(translationX: 0, y: view.bounds.height)
     }
@@ -64,7 +64,7 @@ class StationsViewController: UITableViewController {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 21, weight: UIFontWeightThin)
         cell.textLabel?.text = stations[indexPath.row].name
 
-        cell.backgroundColor = .defaultColor
+        cell.backgroundColor = delegate?.view.backgroundColor
         let selectedView = UIView()
         selectedView.backgroundColor = UIColor.defaultColor.darker()
         cell.selectedBackgroundView = selectedView
