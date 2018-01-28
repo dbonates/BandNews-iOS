@@ -6,7 +6,50 @@
 //  Copyright © 2017 Daniel Bonates. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+struct ImageSource: Codable {
+    var id: String
+    let regularURL: URL?
+    let fullURL: URL?
+    let smallURL: URL?
+    
+    
+    enum ImageCodingKeys: String, CodingKey {
+        case id
+        case urls
+    }
+    
+    // esse enum interno é apenas para descer um nível
+    enum URLsKeys: String, CodingKey {
+        case regular
+        case full
+        case small
+    }
+    
+    
+    init(from decoder: Decoder) throws {
+        
+        let container = try decoder.container(keyedBy: ImageCodingKeys.self)
+        
+        self.id = try container.decode(String.self, forKey: .id)
+        
+
+        // deep one level
+        let urlsSources = try container.nestedContainer(keyedBy: URLsKeys.self, forKey: .urls)
+
+        let regularURL = try urlsSources.decode(String.self, forKey: .regular)
+        self.regularURL = URL(string: regularURL)
+
+        let fullURL = try urlsSources.decode(String.self, forKey: .full)
+        self.fullURL = URL(string: fullURL)
+        
+        let smallURL = try urlsSources.decode(String.self, forKey: .small)
+        self.smallURL = URL(string: smallURL)
+        
+    }
+    
+}
 
 final class DataCache {
     
@@ -18,6 +61,38 @@ final class DataCache {
             return cacheBasePath.appendingPathComponent(url.lastPathComponent + "-\(id)")
         }
         return cacheBasePath.appendingPathComponent(url.lastPathComponent)
+    }
+    
+    func getNiceBg(from url: URL, completion: @escaping (UIImage?) -> ()) {
+        
+        let imageResource = Resource<UIImage>(id: nil, url: url, parse: { data in
+         
+            let decoder = JSONDecoder()
+            
+            do {
+                
+                let imgJson = try decoder.decode(ImageSource.self, from: data)
+                
+                guard let imgURL = imgJson.regularURL else { return nil }
+                
+                let imgData = try Data(contentsOf: imgURL)
+                
+                return UIImage(data: imgData)
+                
+                
+            } catch let error {
+                print(error.localizedDescription)
+            }
+            return nil
+        })
+    
+        let headers = ["Accept-Version": "v1", "Authorization": "Client-ID 5f2bef1fb96294cc4c0405df7c61a7c1e6cfb82509dc182cdda7ac618c2da794"]
+        
+        let parameters = ["query":"nature, mountain, zen", "orientation":"portrait", "collections":"1610442"]
+        
+        DataService().load(resource: imageResource, headers: headers, parameters: parameters) { image in
+            completion(image)
+        }
     }
     
     func getRadioList(from url: URL, completion: @escaping ([Station]?) -> ()) {

@@ -23,8 +23,15 @@ class MainViewController: UIViewController {
     let bandLogo = UILabel(frame: CGRect.zero)
     var ledView = Controls.acessory.ledView
     
+    var bgView: UIImageView!
+    
+    var canSwipe = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        addBackGroundImageView()
+        loadRandomBackground()
         setupGestures()
         
         addAppLogo()
@@ -36,6 +43,47 @@ class MainViewController: UIViewController {
         loadLastStationIfAny()
     }
     
+    func addBackGroundImageView() {
+        
+        bgView = UIImageView(frame: .zero)
+        bgView.translatesAutoresizingMaskIntoConstraints = false
+        bgView.backgroundColor = .clear
+        bgView.contentMode = .scaleAspectFill
+        bgView.isOpaque = false
+        bgView.alpha = 0.5
+        view.addSubview(bgView)
+        NSLayoutConstraint.activate([
+            bgView.topAnchor.constraint(equalTo: view.topAnchor),
+            bgView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            bgView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bgView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            ])
+    }
+    
+    func loadRandomBackground() {
+        
+        if !canSwipe { return }
+        
+        canSwipe = false
+        
+        let url = URL(string: "https://api.unsplash.com/photos/random")!
+        
+        DataCache().getNiceBg(from: url) { image in
+            guard let img = image else { return }
+            DispatchQueue.main.async {
+                self.swapBg(with: img)
+            }
+        }
+    }
+    
+    func swapBg(with image: UIImage) {
+        UIView.transition(with: self.bgView, duration: 1, options: [.allowUserInteraction, .transitionCrossDissolve], animations: {
+            
+            self.bgView.image = image
+        }) { end in
+            self.canSwipe = true
+        }
+    }
     
     func loadLastStationIfAny() {
         
@@ -64,7 +112,7 @@ class MainViewController: UIViewController {
     func addAppLogo() {
         
         bandLogo.translatesAutoresizingMaskIntoConstraints = false
-        bandLogo.text = "BandNews"
+        bandLogo.text = "Nice Radio"
         bandLogo.textAlignment = .center
         bandLogo.font = UIFont.systemFont(ofSize: 34, weight: UIFontWeightThin)
         bandLogo.textColor = .white
@@ -83,7 +131,8 @@ class MainViewController: UIViewController {
         statusInfo.addTarget(self, action: #selector(statusInfotaped(_:)), for: .touchUpInside)
         statusInfo.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         statusInfo.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        statusInfo.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
+        statusInfo.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        statusInfo.backgroundColor = UIColor.black.withAlphaComponent(0.1)
     }
     
     func statusInfotaped(_ sender: Any){
@@ -108,6 +157,14 @@ class MainViewController: UIViewController {
         doubleTap.numberOfTapsRequired = 2
         doubleTap.numberOfTouchesRequired = 1
         view.addGestureRecognizer(doubleTap)
+        
+        let swapLeft = UISwipeGestureRecognizer(target: self, action: #selector(loadRandomBackground))
+        swapLeft.direction = .left
+        view.addGestureRecognizer(swapLeft)
+        
+        let swapRight = UISwipeGestureRecognizer(target: self, action: #selector(loadRandomBackground))
+        swapRight.direction = .right
+        view.addGestureRecognizer(swapRight)
     }
     
     func openStationsList() {
